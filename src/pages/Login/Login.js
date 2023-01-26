@@ -1,11 +1,12 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [values, setValues] = useState({
     email: "",
     password: "",
@@ -25,10 +26,16 @@ const Login = () => {
       );
       toast.success(result?.data?.message)
       localStorage.setItem('authToken', result?.data?.token)
+      navigate('/')
     }catch(err){
       toast.error(err?.response?.data.message)
     }
   };
+  useEffect(()=>{
+    if(localStorage.getItem('authToken')){
+      navigate('/')
+    }
+  },[navigate])
   return (
     <div>
       <Form onSubmit={handleSubmit}>

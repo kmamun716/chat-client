@@ -1,43 +1,58 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import axios from 'axios';
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import axios from "axios";
 
 const Register = () => {
-    const [values, setValues] = useState({
-        name:'',
-        email: '',
-        password: '',
-        confirmPassword:''
-    })
-    const handleChange = e =>{
-        setValues({
-            ...values,
-            [e.target.name]: e.target.value
-        })
+  const navigate = useNavigate();
+  const [values, setValues] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const handleChange = (e) => {
+    setValues({
+      ...values,
+      [e.target.name]: e.target.value,
+    });
+  };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { name, email, password, confirmPassword } = values;
+    if (password !== confirmPassword) {
+      toast.error("Password Not Matched With Confirm Password");
+    } else {
+      try {
+        const result = await axios.post(
+          "http://localhost:4000/api/user/register",
+          { name, email, password }
+        );
+        toast.success(result?.data?.message)
+        navigate('/login')
+      } catch (err) {
+        toast.error(err?.response?.data?.message)
+      }
     }
-    const handleSubmit = async e =>{
-        e.preventDefault()
-        const {name, email, password, confirmPassword} = values;
-        if(password !== confirmPassword){
-            toast.error('Password Not Matched With Confirm Password')
-        }else{
-          const result = await axios.post('http://localhost:4000/api/user/register', {name, email, password});
-          console.log(result)
-        }
+  };
+  useEffect(()=>{
+    if(localStorage.getItem('authToken')){
+      navigate('/')
     }
-    return (
-        <div>
-          <Form onSubmit={handleSubmit}>
-          <Form.Group className="mb-3" controlId="formBasicText">
+  },[navigate])
+  return (
+    <div>
+      <Form onSubmit={handleSubmit}>
+        <Form.Group className="mb-3" controlId="formBasicText">
           <Form.Label>Name</Form.Label>
           <Form.Control
             type="text"
             placeholder="Enter Name"
             onChange={handleChange}
-            name='name'
+            name="name"
+            required
           />
         </Form.Group>
         <Form.Group className="mb-3" controlId="formBasicEmail">
@@ -46,7 +61,8 @@ const Register = () => {
             type="email"
             placeholder="Enter email"
             onChange={handleChange}
-            name='email'
+            name="email"
+            required
           />
         </Form.Group>
 
@@ -56,7 +72,8 @@ const Register = () => {
             type="password"
             placeholder="Password"
             onChange={handleChange}
-            name='password'
+            name="password"
+            required
           />
         </Form.Group>
         <Form.Group className="mb-3" controlId="formBasicPassword">
@@ -65,7 +82,8 @@ const Register = () => {
             type="password"
             placeholder="Confirm Password"
             onChange={handleChange}
-            name='confirmPassword'
+            name="confirmPassword"
+            required
           />
         </Form.Group>
         <Button variant="primary" type="submit" value="Register">
@@ -74,9 +92,9 @@ const Register = () => {
         <p>
           Already Have Account? <Link to="/login">Login Here</Link>
         </p>
-      </Form>  
-        </div>
-    );
+      </Form>
+    </div>
+  );
 };
 
 export default Register;

@@ -6,6 +6,7 @@ import Register from './pages/Register/Register';
 import Login from './pages/Login/Login';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import SetAvatar from './pages/SetAvatar/SetAvatar';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/register' element={<Register />} />
         <Route path='/login' element={<Login />} />
+        <Route path='/setAvatar' element={<SetAvatar />} />
         <Route path='*' element={<NotFound />} />
       </Routes>
       <ToastContainer/>
